@@ -23,8 +23,9 @@ function ngDatalist ($document, $timeout, $window) {
     scope: {
       items: '=items',         /** @type {Array}   */
       currentItem: '=current', /** @type {string}  */
-      fieldRequired: '=req',   /** @type {boolean} */
-      styling: '=styling'      /** @type {boolean} */
+      fieldRequired: '=?req',   /** @type {boolean} */
+      styling: '=styling',      /** @type {boolean} */
+      placeholder: '@?placeholder'      /** @type {string} */
     },
     link: function (scope, elem) {
       // --------------------------------------------------------- //
@@ -180,6 +181,7 @@ function ngDatalist ($document, $timeout, $window) {
     '<div ng-style="containerStyle" class="ng-datalist-container">'+
       '<input type="text" '+
              'class="ng-datalist-input" '+
+             'placeholder="{{placeholder}}" '+
              'ng-required="fieldRequired" '+
              'ng-model="currentItem" '+
              'ng-click="showList($event)" '+
