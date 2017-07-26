@@ -14,9 +14,9 @@
  ------------------------------------------------------------------------------*/
 
 angular.module('ng-datalist', [])
-  .directive('ngDatalist', ngDatalist);
+  .directive('ngDatalist', ['$document', '$timeout', '$window', ngDatalist]);
 
-function ngDatalist ($document, $timeout) {
+function ngDatalist ($document, $timeout, $window) {
   return {
     restrict: 'E',
     replace: true,
@@ -81,13 +81,13 @@ function ngDatalist ($document, $timeout) {
           'display': 'none',
           'position': 'absolute',
           'top': '32px',
-          'max-height': '100px',
           'background-color': '#FFFFFF',
           'width': '230px',
           'overflow-y': 'auto',
           'border-left': '1px solid '+borderColor,
           'border-bottom': '1px solid '+borderColor,
-          'border-right': '1px solid '+borderColor
+          'border-right': '1px solid '+borderColor,
+          'z-index': 10
         };
 
         // List items styles:
@@ -122,7 +122,10 @@ function ngDatalist ($document, $timeout) {
        */
       function showList (event) {
         event.stopPropagation();
-        elem.find('ul').css('display', 'block');
+        var maxHeight = $window.innerHeight - event.target.getBoundingClientRect().top - 40;
+        elem.find('ul')
+        .css('max-height',  maxHeight + 'px')
+        .css('display', 'block');
       }
 
       /**
