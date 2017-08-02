@@ -25,7 +25,8 @@ function ngDatalist ($document, $timeout, $window) {
       currentItem: '=current', /** @type {string}  */
       fieldRequired: '=?req',   /** @type {boolean} */
       styling: '=styling',      /** @type {boolean} */
-      placeholder: '@?placeholder'      /** @type {string} */
+      placeholder: '@?placeholder',      /** @type {string} */
+      inputClass: '@?inputClass'         /** @type {string} */
     },
     link: function (scope, elem) {
       // --------------------------------------------------------- //
@@ -60,7 +61,6 @@ function ngDatalist ($document, $timeout, $window) {
         // Container element styles:
         scope.containerStyle = {
           'position': 'relative',
-          'width': '232px',
           'box-sizing': 'border-box',
           'height': '32px'
         };
@@ -68,7 +68,6 @@ function ngDatalist ($document, $timeout, $window) {
         // Input element styles:
         scope.inputStyle = {
           'box-sizing': 'border-box',
-          'width': '100%',
           'height': '32px',
           'padding': '5px',
           'margin': '0px'
@@ -83,7 +82,6 @@ function ngDatalist ($document, $timeout, $window) {
           'position': 'absolute',
           'top': '32px',
           'background-color': '#FFFFFF',
-          'width': '230px',
           'overflow-y': 'auto',
           'border-left': '1px solid '+borderColor,
           'border-bottom': '1px solid '+borderColor,
@@ -94,7 +92,6 @@ function ngDatalist ($document, $timeout, $window) {
         // List items styles:
         scope.liStyle = {
           'display': 'block',
-          'width': '100%',
           'padding': '5px',
           'cursor': 'pointer',
           'box-sizing': 'border-box'
@@ -124,9 +121,10 @@ function ngDatalist ($document, $timeout, $window) {
       function showList (event) {
         event.stopPropagation();
         var maxHeight = $window.innerHeight - event.target.getBoundingClientRect().top - 40;
-        elem.find('ul')
-        .css('max-height',  maxHeight + 'px')
+        var ul = elem.find('ul');
+        ul.css('max-height',  maxHeight + 'px')
         .css('display', 'block');
+        scope.liStyle.width = event.target.clientWidth + 'px';
       }
 
       /**
@@ -180,7 +178,7 @@ function ngDatalist ($document, $timeout, $window) {
     template:
     '<div ng-style="containerStyle" class="ng-datalist-container">'+
       '<input type="text" '+
-             'class="ng-datalist-input" '+
+             'class="ng-datalist-input {{inputClass}}" '+
              'placeholder="{{placeholder}}" '+
              'ng-required="fieldRequired" '+
              'ng-model="currentItem" '+
