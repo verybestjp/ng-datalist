@@ -60,6 +60,7 @@ function ngDatalist ($document, $timeout, $window) {
       if (scope.styling !== false) {
         // Container element styles:
         scope.containerStyle = {
+          'display': 'inline-block',
           'position': 'relative',
           'box-sizing': 'border-box',
           'height': '32px'
