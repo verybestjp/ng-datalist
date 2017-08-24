@@ -39,6 +39,11 @@ function ngDatalist ($document, $timeout, $window) {
       scope.highlightItem = highlightItem;
       scope.clearHighlightedItem = clearHighlightedItem;
 
+      elem.find('input').on('input propertychange', function() {
+        scope.currentItem = this.value;
+        scope.$evalAsync();
+      });
+
       // Expose dependencies in the directive:
       var document = $document;
       var domReady = $timeout;
