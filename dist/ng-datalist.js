@@ -168,7 +168,17 @@ function ngDatalist ($document, $timeout, $window) {
       // --------------------------------------------------------- //
       // Bind click event to the document to hide list:
       domReady(function () {
-        document.on('click', function (event) { scope.hideList(event); })
+        document.on('click', function (event) {
+          var contains = false;
+          if (window.jQuery) {
+            contains = window.jQuery.contains(elem, event.target);
+          } else {
+            contains = elem.contains(event.target);
+          }
+          if (!contains) {
+            scope.hideList(event);
+          }
+        })
       })
 
       // Remove document click event on destroy:
@@ -191,7 +201,7 @@ function ngDatalist ($document, $timeout, $window) {
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: currentItem track by $index" '+
             'class="ng-datalist-item" '+
-            'ng-mousedown="selectItem($event, item)" '+
+            'ng-click="selectItem($event, item)" '+
             'ng-style="liStyle" '+
             'ng-mouseover="highlightItem($event)" '+
             'ng-mouseleave="clearHighlightedItem($event)">{{ item }}</li>'+
