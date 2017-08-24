@@ -108,7 +108,7 @@ function ngDatalist ($document, $timeout, $window) {
        * @param {Object} event Click event used to prevent bubbling.
        * @param {string} item  Text to be copied to the model.
        */
-      function selectItem (event, item, index) {
+      function selectItem (event, item) {
         event.stopPropagation();
         scope.currentItem = item;
         elem.find('ul').css('display', 'none');
@@ -144,9 +144,9 @@ function ngDatalist ($document, $timeout, $window) {
        * @param {Object} event Mouseover event used to prevent bubbling.
        * @param {Number} index Used to locate current list item in the DOM tree.
        */
-      function highlightItem (event, index) {
+      function highlightItem (event) {
         event.stopPropagation();
-        elem.find('li').eq(index).css({
+        angular.element(event.currentTarget).css({
           'background-color': borderColor
         });
       }
@@ -158,8 +158,8 @@ function ngDatalist ($document, $timeout, $window) {
        */
       function clearHighlightedItem (event) {
         event.stopPropagation();
-        elem.find('li').css({
-          'background-color': 'initial'
+        angular.element(event.currentTarget).css({
+          'background-color': 'transparent'
         });
       }
 
@@ -191,9 +191,9 @@ function ngDatalist ($document, $timeout, $window) {
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: currentItem track by $index" '+
             'class="ng-datalist-item" '+
-            'ng-click="selectItem($event, item, $index)" '+
+            'ng-mousedown="selectItem($event, item)" '+
             'ng-style="liStyle" '+
-            'ng-mouseover="highlightItem($event, $index)" '+
+            'ng-mouseover="highlightItem($event)" '+
             'ng-mouseleave="clearHighlightedItem($event)">{{ item }}</li>'+
       '</ul>'+
     '</div>'
