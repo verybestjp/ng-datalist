@@ -38,6 +38,7 @@ function ngDatalist ($document, $timeout, $window) {
       scope.hideList = hideList;
       scope.highlightItem = highlightItem;
       scope.clearHighlightedItem = clearHighlightedItem;
+      scope.keydown = keydown;
 
       elem.find('input').on('input propertychange', function() {
         scope.currentItem = this.value;
@@ -113,9 +114,9 @@ function ngDatalist ($document, $timeout, $window) {
        * @param {Object} event Click event used to prevent bubbling.
        * @param {string} item  Text to be copied to the model.
        */
-      function selectItem (event, item) {
+      function selectItem (event, index) {
         event.stopPropagation();
-        scope.currentItem = item;
+        scope.currentItem = elem.find('li').eq(index).text();
         elem.find('ul').css('display', 'none');
       }
 
@@ -124,6 +125,7 @@ function ngDatalist ($document, $timeout, $window) {
        * @description Show ul DOM element containing the list.
        * @param {Object} event Click event used to prevent bubbling.
        */
+      var cursor = null;
       function showList (event) {
         event.stopPropagation();
         var maxHeight = $window.innerHeight - event.target.getBoundingClientRect().top - 40;
@@ -131,6 +133,7 @@ function ngDatalist ($document, $timeout, $window) {
         ul.css('max-height',  maxHeight + 'px')
         .css('display', 'block');
         scope.liStyle.width = event.target.clientWidth + 'px';
+        cursor = null;
       }
 
       /**
@@ -149,11 +152,19 @@ function ngDatalist ($document, $timeout, $window) {
        * @param {Object} event Mouseover event used to prevent bubbling.
        * @param {Number} index Used to locate current list item in the DOM tree.
        */
-      function highlightItem (event) {
+      function highlightItem (event, index) {
         event.stopPropagation();
-        angular.element(event.currentTarget).css({
+        var li = elem.find('li');
+        if (index < 0 || index >= li.length) {
+          return;
+        }
+        li.css({
+          'background-color': 'transparent'
+        });
+        li.eq(index).css({
           'background-color': borderColor
         });
+        cursor = index;
       }
 
       /**
@@ -161,11 +172,42 @@ function ngDatalist ($document, $timeout, $window) {
        * @description Remove item highlight on mouseleave.
        * @param {Object} event Mouseleave event used to prevent bubbling.
        */
-      function clearHighlightedItem (event) {
+      function clearHighlightedItem (event, index) {
         event.stopPropagation();
-        angular.element(event.currentTarget).css({
+        var li = elem.find('li');
+        if (index < 0 || index >= li.length) {
+          return;
+        }
+        li.eq(index).css({
           'background-color': 'transparent'
         });
+      }
+      function keydown(event) {
+        if (13 === event.keyCode) {
+          //enter
+          if (null !== cursor) {
+            selectItem(event, cursor);
+          }
+        }else if (40 === event.keyCode) {
+          //down
+          if (null !== cursor) {
+            highlightItem(event, cursor + 1);
+          }else {
+            highlightItem(event, 0);
+          }
+        }else if (38 === event.keyCode) {
+          //up
+          if (null !== cursor) {
+            highlightItem(event, cursor - 1);
+          }
+        }else if (37 === event.keyCode || 39 === event.keyCode || 8 === event.keyCode) {
+          // left, right, backspace
+          clearHighlightedItem(event, cursor);
+          showList(event);
+        }else if (9 === event.keyCode) {
+          // tab
+          hideList(event);
+        }
       }
 
       // --------------------------------------------------------- //
@@ -200,16 +242,14 @@ function ngDatalist ($document, $timeout, $window) {
              'ng-model="currentItem" '+
              'ng-click="showList($event)" '+
              'ng-style="inputStyle" '+
-             'ng-keydown="($event.keyCode == 13 || '+
-                           '$event.keyCode == 9) && '+
-                           'hideList($event)">'+
+             'ng-keydown="keydown($event)">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: currentItem track by $index" '+
             'class="ng-datalist-item" '+
-            'ng-click="selectItem($event, item)" '+
+            'ng-click="selectItem($event, $index)" '+
             'ng-style="liStyle" '+
-            'ng-mouseover="highlightItem($event)" '+
-            'ng-mouseleave="clearHighlightedItem($event)">{{ item }}</li>'+
+            'ng-mouseover="highlightItem($event, $index)" '+
+            'ng-mouseleave="clearHighlightedItem($event, $index)">{{ item }}</li>'+
       '</ul>'+
     '</div>'
   }
