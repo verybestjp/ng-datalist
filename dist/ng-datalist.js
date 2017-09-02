@@ -42,6 +42,7 @@ function ngDatalist ($document, $timeout, $window) {
 
       elem.find('input').on('input propertychange', function() {
         scope.currentItem = this.value;
+        scope.inputItem = this.value;
         scope.$evalAsync();
       });
 
@@ -133,6 +134,7 @@ function ngDatalist ($document, $timeout, $window) {
         ul.css('max-height',  maxHeight + 'px')
         .css('display', 'block');
         scope.liStyle.width = event.target.clientWidth + 'px';
+        scope.inputItem = '';
         cursor = null;
       }
 
@@ -244,7 +246,7 @@ function ngDatalist ($document, $timeout, $window) {
              'ng-style="inputStyle" '+
              'ng-keydown="keydown($event)">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
-        '<li ng-repeat="item in items | filter: currentItem track by $index" '+
+        '<li ng-repeat="item in items | filter: inputItem track by $index" '+
             'class="ng-datalist-item" '+
             'ng-click="selectItem($event, $index)" '+
             'ng-style="liStyle" '+
