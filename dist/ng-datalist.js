@@ -211,6 +211,27 @@ function ngDatalist ($document, $timeout, $window) {
           hideList(event);
         }
       }
+      // https://github.com/jquery/jquery/blob/2d4f53416e5f74fa98e0c1d66b6f3c285a12f0ce/external/sizzle/dist/sizzle.js#L850
+      function jq_contains(a, b) {
+        if (a.contains) {
+            var adown = a.nodeType === 9 ? a.documentElement : a,
+                bup = b && b.parentNode;
+            return a === bup || !!( bup && bup.nodeType === 1 && (
+                adown.contains ?
+                    adown.contains( bup ) :
+                    a.compareDocumentPosition && a.compareDocumentPosition( bup ) & 16
+            ));
+        }else {
+            if ( b ) {
+                while ( (b = b.parentNode) ) {
+                    if ( b === a ) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+      }
 
       // --------------------------------------------------------- //
       //                           EVENTS                          //
@@ -218,12 +239,7 @@ function ngDatalist ($document, $timeout, $window) {
       // Bind click event to the document to hide list:
       domReady(function () {
         document.on('click', function (event) {
-          var contains = false;
-          if (window.jQuery) {
-            contains = window.jQuery.contains(elem, event.target);
-          } else {
-            contains = elem.contains(event.target);
-          }
+          var contains = jq_contains(elem, event.target);
           if (!contains) {
             scope.hideList(event);
           }
