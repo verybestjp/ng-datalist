@@ -14,9 +14,9 @@
  ------------------------------------------------------------------------------*/
 
 angular.module('ng-datalist', [])
-  .directive('ngDatalist', ['$document', '$timeout', '$window', ngDatalist]);
+  .directive('ngDatalist', ['$document', '$timeout', '$window', '$rootScope', ngDatalist]);
 
-function ngDatalist ($document, $timeout, $window) {
+function ngDatalist ($document, $timeout, $window, $rootScope) {
   return {
     restrict: 'E',
     replace: true,
@@ -40,6 +40,9 @@ function ngDatalist ($document, $timeout, $window) {
       scope.clearHighlightedItem = clearHighlightedItem;
       scope.keydown = keydown;
 
+      scope.$on('openNewList', function(event) {
+        hideList(event);
+      });
       elem.find('input').on('input propertychange', function() {
         scope.currentItem = this.value;
         scope.inputItem = this.value;
@@ -129,6 +132,8 @@ function ngDatalist ($document, $timeout, $window) {
       var cursor = null;
       function showList (event) {
         event.stopPropagation();
+        $rootScope.$broadcast('openNewList');
+
         var maxHeight = $window.innerHeight - event.target.getBoundingClientRect().top - 40;
         var ul = elem.find('ul');
         ul.css('max-height',  maxHeight + 'px')
@@ -144,7 +149,9 @@ function ngDatalist ($document, $timeout, $window) {
        * @param {Object} event Click event used to prevent bubbling.
        */
       function hideList (event) {
-        event.stopPropagation();
+        if (event.stopPropagation) {
+          event.stopPropagation();
+        }
         elem.find('ul').css('display', 'none');
       }
 
