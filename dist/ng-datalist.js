@@ -20,15 +20,16 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
   return {
     restrict: 'E',
     replace: true,
+    require: 'ngModel',
     scope: {
       items: '=items',         /** @type {Array}   */
-      currentItem: '=current', /** @type {string}  */
+      ngModel: '=',            /** @type {string}  */
       fieldRequired: '=?req',   /** @type {boolean} */
       styling: '=styling',      /** @type {boolean} */
       placeholder: '@?placeholder',      /** @type {string} */
       inputClass: '@?inputClass'         /** @type {string} */
     },
-    link: function (scope, elem) {
+    link: function (scope, elem, attrs, ctrl) {
       // --------------------------------------------------------- //
       //                      SCOPE & VARIABLES                    //
       // --------------------------------------------------------- //
@@ -39,12 +40,14 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
       scope.highlightItem = highlightItem;
       scope.clearHighlightedItem = clearHighlightedItem;
       scope.keydown = keydown;
+      scope.change = change;
 
       scope.$on('openNewList', function(event) {
         hideList(event);
       });
       elem.find('input').on('input propertychange', function() {
-        scope.currentItem = this.value;
+        scope.ngModel = this.value;
+        ctrl.$setViewValue(scope.ngModel);
         scope.inputItem = this.value;
         scope.$evalAsync();
       });
@@ -120,7 +123,8 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
        */
       function selectItem (event, index) {
         event.stopPropagation();
-        scope.currentItem = elem.find('li').eq(index).text();
+        scope.ngModel = elem.find('li').eq(index).text();
+        ctrl.$setViewValue(scope.ngModel);
         elem.find('ul').css('display', 'none');
       }
 
@@ -218,6 +222,13 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
           hideList(event);
         }
       }
+
+      function change() {
+        // ng-change発生時はoninputイベントが発生しないため、oninputと同じ処理
+        ctrl.$setViewValue(scope.ngModel);
+        scope.inputItem = scope.ngModel;
+      }
+
       // https://github.com/jquery/jquery/blob/2d4f53416e5f74fa98e0c1d66b6f3c285a12f0ce/external/sizzle/dist/sizzle.js#L850
       function jq_contains(a, b) {
         if (a.contains) {
@@ -264,9 +275,10 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
              'class="ng-datalist-input {{inputClass}}" '+
              'placeholder="{{placeholder}}" '+
              'ng-required="fieldRequired" '+
-             'ng-model="currentItem" '+
+             'ng-model="ngModel" '+
              'ng-click="showList($event)" '+
              'ng-style="inputStyle" '+
+             'ng-change="change($event)" '+
              'ng-keydown="keydown($event)">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: inputItem track by $index" '+
