@@ -27,7 +27,8 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
       fieldRequired: '=?req',   /** @type {boolean} */
       styling: '=styling',      /** @type {boolean} */
       placeholder: '@?placeholder',      /** @type {string} */
-      inputClass: '@?inputClass'         /** @type {string} */
+      inputClass: '@?inputClass',         /** @type {string} */
+      ngDisabled: '=?'            /** @type {string}  */
     },
     link: function (scope, elem, attrs, ctrl) {
       // --------------------------------------------------------- //
@@ -279,7 +280,8 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
              'ng-click="showList($event)" '+
              'ng-style="inputStyle" '+
              'ng-change="change($event)" '+
-             'ng-keydown="keydown($event)">'+
+             'ng-keydown="keydown($event)" '+
+             'ng-disabled="ngDisabled">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: inputItem track by $index" '+
             'class="ng-datalist-item" '+
