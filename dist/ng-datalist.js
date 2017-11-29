@@ -127,6 +127,7 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
         scope.ngModel = elem.find('li').eq(index).text();
         ctrl.$setViewValue(scope.ngModel);
         elem.find('ul').css('display', 'none');
+        elem.find('input').triggerHandler('focus');
       }
 
       /**
