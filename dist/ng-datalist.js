@@ -14,9 +14,9 @@
  ------------------------------------------------------------------------------*/
 
 angular.module('ng-datalist', [])
-  .directive('ngDatalist', ['$document', '$timeout', '$window', '$rootScope', ngDatalist]);
+  .directive('ngDatalist', ['$timeout', '$window', '$rootScope', ngDatalist]);
 
-function ngDatalist ($document, $timeout, $window, $rootScope) {
+function ngDatalist ($timeout, $window, $rootScope) {
   return {
     restrict: 'E',
     replace: true,
@@ -54,7 +54,6 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
       });
 
       // Expose dependencies in the directive:
-      var document = $document;
       var domReady = $timeout;
 
       // Set field to not required if attribute set to false
@@ -253,22 +252,25 @@ function ngDatalist ($document, $timeout, $window, $rootScope) {
         }
       }
 
+      function hideListImpl(event) {
+        var contains = jq_contains(elem, event.target);
+        if (!contains) {
+          scope.hideList(event);
+        }
+      }
+
       // --------------------------------------------------------- //
       //                           EVENTS                          //
       // --------------------------------------------------------- //
       // Bind click event to the document to hide list:
       domReady(function () {
-        document.on('click', function (event) {
-          var contains = jq_contains(elem, event.target);
-          if (!contains) {
-            scope.hideList(event);
-          }
-        })
+        // ng-datalistが複数あると複数個登録されることに注意
+        document.addEventListener('click', hideListImpl);
       })
 
       // Remove document click event on destroy:
       elem.on('$destroy', function () {
-        document.off('click');
+        document.removeEventListener('click', hideListImpl);
       });
     },
     template:
