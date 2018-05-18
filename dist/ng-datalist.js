@@ -42,7 +42,9 @@ function ngDatalist ($timeout, $window, $rootScope) {
       scope.clearHighlightedItem = clearHighlightedItem;
       scope.keydown = keydown;
       scope.change = change;
-
+      if (scope.placeholder) {
+        elem.find('input').attr('placeholder', scope.placeholder);
+      }
       scope.$on('openNewList', function(event) {
         hideList(event);
       });
@@ -277,7 +279,6 @@ function ngDatalist ($timeout, $window, $rootScope) {
     '<div ng-style="containerStyle" class="ng-datalist-container">'+
       '<input type="text" '+
              'class="ng-datalist-input {{inputClass}}" '+
-             'placeholder="{{placeholder}}" '+
              'ng-required="fieldRequired" '+
              'ng-model="ngModel" '+
              'ng-click="showList($event)" '+
