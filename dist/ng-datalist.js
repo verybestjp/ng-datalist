@@ -28,7 +28,8 @@ function ngDatalist ($timeout, $window, $rootScope) {
       styling: '=styling',      /** @type {boolean} */
       placeholder: '@?placeholder',      /** @type {string} */
       inputClass: '@?inputClass',         /** @type {string} */
-      ngDisabled: '=?'            /** @type {string}  */
+      ngDisabled: '=?',            /** @type {string}  */
+      width: '=?',
     },
     link: function (scope, elem, attrs, ctrl) {
       // --------------------------------------------------------- //
@@ -88,7 +89,9 @@ function ngDatalist ($timeout, $window, $rootScope) {
           'padding': '5px',
           'margin': '0px'
         };
-
+        if (scope.width) {
+          scope.inputStyle.width = (+scope.width || 0) + 'px';
+        }
         // List element styles:
         scope.ulStyle = {
           'list-style-type': 'none',
