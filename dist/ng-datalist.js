@@ -22,7 +22,8 @@ function ngDatalist ($timeout, $window, $rootScope) {
     replace: true,
     require: 'ngModel',
     scope: {
-      items: '=items',         /** @type {Array}   */
+      items: '=?',         /** @type {Array}   */
+      fetchItems: '&?',         /** @type {function}   */
       ngModel: '=',            /** @type {string}  */
       fieldRequired: '=?req',   /** @type {boolean} */
       styling: '=styling',      /** @type {boolean} */
@@ -55,6 +56,12 @@ function ngDatalist ($timeout, $window, $rootScope) {
         scope.inputItem = this.value;
         scope.$evalAsync();
       });
+
+      // copy array
+      scope.itemsSnap = [];
+      if (Array.isArray(scope.items)) {
+        scope.itemsSnap = scope.items.slice(0);
+      }
 
       // Expose dependencies in the directive:
       var domReady = $timeout;
@@ -144,6 +151,9 @@ function ngDatalist ($timeout, $window, $rootScope) {
         event.stopPropagation();
         $rootScope.$broadcast('openNewList');
 
+        if (scope.fetchItems) {
+          scope.fetchItems({items: scope.itemsSnap});
+        }
         var maxHeight = $window.innerHeight - event.target.getBoundingClientRect().top - 40;
         var ul = elem.find('ul');
         ul.css('max-height',  maxHeight + 'px')
@@ -290,7 +300,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
              'ng-keydown="keydown($event)" '+
              'ng-disabled="ngDisabled">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
-        '<li ng-repeat="item in items | filter: inputItem track by $index" '+
+        '<li ng-repeat="item in itemsSnap | filter: inputItem track by $index" '+
             'class="ng-datalist-item" '+
             'ng-click="selectItem($event, $index)" '+
             'ng-style="liStyle" '+
