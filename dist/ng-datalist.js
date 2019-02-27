@@ -31,6 +31,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
       inputClass: '@?inputClass',         /** @type {string} */
       ngDisabled: '=?',            /** @type {string}  */
       width: '=?',
+      func: '=?',
     },
     link: function (scope, elem, attrs, ctrl) {
       // --------------------------------------------------------- //
@@ -58,6 +59,10 @@ function ngDatalist ($timeout, $window, $rootScope) {
       });
       if (!Array.isArray(scope.items)) {
         scope.items = [];
+      }
+      if (scope.func) {
+        // call showList from external javascript
+        scope.func.showList = showList;
       }
 
       // Expose dependencies in the directive:
@@ -144,18 +149,19 @@ function ngDatalist ($timeout, $window, $rootScope) {
        * @param {Object} event Click event used to prevent bubbling.
        */
       var cursor = null;
-      function showList (event) {
+      function showList () {
         event.stopPropagation();
         $rootScope.$broadcast('openNewList');
 
         if (scope.fetchItems) {
           scope.fetchItems({items: scope.items});
         }
-        var maxHeight = $window.innerHeight - event.target.getBoundingClientRect().top - 40;
+        var inputElem = elem[0].firstChild;
+        var maxHeight = $window.innerHeight - inputElem.getBoundingClientRect().top - 40;
         var ul = elem.find('ul');
         ul.css('max-height',  maxHeight + 'px')
         .css('display', 'block');
-        scope.liStyle.width = event.target.clientWidth + 'px';
+        scope.liStyle.width = inputElem.clientWidth + 'px';
         scope.inputItem = '';
         cursor = null;
       }
