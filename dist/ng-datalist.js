@@ -149,8 +149,10 @@ function ngDatalist ($timeout, $window, $rootScope) {
        * @param {Object} event Click event used to prevent bubbling.
        */
       var cursor = null;
-      function showList () {
-        event.stopPropagation();
+      function showList (event) {
+        if (event) {
+          event.stopPropagation();
+        }
         $rootScope.$broadcast('openNewList');
 
         if (scope.fetchItems) {
