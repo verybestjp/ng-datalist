@@ -30,6 +30,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
       placeholder: '@?placeholder',      /** @type {string} */
       inputClass: '@?inputClass',         /** @type {string} */
       ngDisabled: '=?',            /** @type {string}  */
+      ngModelOptions: '=?',            /** @type {object}  */
       width: '=?',
       func: '=?',
     },
@@ -303,7 +304,8 @@ function ngDatalist ($timeout, $window, $rootScope) {
              'ng-style="inputStyle" '+
              'ng-change="change($event)" '+
              'ng-keydown="keydown($event)" '+
-             'ng-disabled="ngDisabled">'+
+             'ng-disabled="ngDisabled"'+
+             'ng-model-options="ngModelOptions">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: inputItem track by $index" '+
             'class="ng-datalist-item" '+
