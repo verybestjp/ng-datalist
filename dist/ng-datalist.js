@@ -31,6 +31,8 @@ function ngDatalist ($timeout, $window, $rootScope) {
       inputClass: '@?inputClass',         /** @type {string} */
       ngDisabled: '=?',            /** @type {string}  */
       width: '=?',
+      containerWidth: '=?',
+      minWidth: '=?',
       func: '=?',
     },
     link: function (scope, elem, attrs, ctrl) {
@@ -98,9 +100,28 @@ function ngDatalist ($timeout, $window, $rootScope) {
           'padding': '5px',
           'margin': '0px'
         };
-        if (scope.width) {
-          scope.inputStyle.width = (+scope.width || 0) + 'px';
+        if (scope.containerWidth) {
+          if (typeof scope.containerWidth === 'string' && scope.containerWidth.indexOf('%') !== -1) {
+            scope.containerStyle.width = scope.containerWidth;
+          } else {
+            scope.containerStyle.width = (+scope.containerWidth || 0) + 'px';
+          }
         }
+        if (scope.width) {
+          if (typeof scope.width === 'string' && scope.width.indexOf('%') !== -1) {
+            scope.inputStyle.width = scope.width;
+          } else {
+            scope.inputStyle.width = (+scope.width || 0) + 'px';
+          }
+        }
+        if (scope.minWidth) {
+          if (typeof scope.minWidth === 'string' && scope.minWidth.indexOf('%') !== -1) {
+            scope.inputStyle['min-width'] = scope.minWidth;
+          } else {
+            scope.inputStyle['min-width'] = (+scope.minWidth || 0) + 'px';
+          }
+        }
+
         // List element styles:
         scope.ulStyle = {
           'list-style-type': 'none',
