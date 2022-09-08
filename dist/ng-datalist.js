@@ -33,6 +33,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
       width: '=?',
       containerWidth: '=?',
       minWidth: '=?',
+      onBlur: '&?',
       func: '=?',
     },
     link: function (scope, elem, attrs, ctrl) {
@@ -46,6 +47,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
       scope.highlightItem = highlightItem;
       scope.clearHighlightedItem = clearHighlightedItem;
       scope.keydown = keydown;
+      scope.blur = blur;
       scope.change = change;
       if (scope.placeholder) {
         elem.find('input').attr('placeholder', scope.placeholder);
@@ -265,6 +267,12 @@ function ngDatalist ($timeout, $window, $rootScope) {
         }
       }
 
+      function blur(event) {
+        if (scope.onBlur) {
+          scope.onBlur(event);
+        }
+      }
+
       function change() {
         // ng-change発生時はoninputイベントが発生しないため、oninputと同じ処理
         ctrl.$setViewValue(scope.ngModel);
@@ -324,6 +332,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
              'ng-style="inputStyle" '+
              'ng-change="change($event)" '+
              'ng-keydown="keydown($event)" '+
+             'ng-blur="blur($event)" '+
              'ng-disabled="ngDisabled">'+
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: inputItem track by $index" '+
