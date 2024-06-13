@@ -35,6 +35,7 @@ function ngDatalist ($timeout, $window, $rootScope) {
       minWidth: '=?',
       onBlur: '&?',
       func: '=?',
+      inputId: '@?inputId',
     },
     link: function (scope, elem, attrs, ctrl) {
       // --------------------------------------------------------- //
@@ -333,7 +334,8 @@ function ngDatalist ($timeout, $window, $rootScope) {
              'ng-change="change($event)" '+
              'ng-keydown="keydown($event)" '+
              'ng-blur="blur($event)" '+
-             'ng-disabled="ngDisabled">'+
+             'ng-disabled="ngDisabled" ' + 
+             'ng-attr-id="{{inputId}}">' +
       '<ul ng-style="ulStyle" class="ng-datalist-list">'+
         '<li ng-repeat="item in items | filter: inputItem track by $index" '+
             'class="ng-datalist-item" '+
